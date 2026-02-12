@@ -8,7 +8,7 @@ Este documento explica o **Diagrama de Classes** do jogo **Trilha do Saber**, de
 
 > O diagrama completo pode ser visualizado na imagem abaixo:
 
-![Diagrama de Classes do Trilha do Saber](./diagrama-classes.png)
+![Diagrama de Classes do Trilha do Saber](./Diagrama-Classes.png)
 
 ---
 
