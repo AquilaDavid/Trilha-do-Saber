@@ -1,115 +1,170 @@
 # 🎮 Trilha do Saber
 
-O **Trilha do Saber** é um jogo educativo desenvolvido em **Java**, executado inicialmente em **terminal**, com o objetivo de reforçar o aprendizado por meio de desafios distribuídos em um tabuleiro em formato de trilha.
+O **Trilha do Saber** é um jogo educativo desenvolvido em **Java puro**, executado inicialmente em **terminal**, cujo foco principal é promover o aprendizado por meio de desafios e, ao mesmo tempo, demonstrar a aplicação correta de **Orientação a Objetos**, **arquitetura limpa** e **princípios SOLID**.
 
-Este projeto foi construído com foco em **boas práticas de Orientação a Objetos**, **arquitetura organizada** e **facilidade de manutenção e evolução**.
+O projeto foi pensado para ser simples na execução, porém **robusto na organização do código**, permitindo fácil avaliação acadêmica e futura evolução, como a adição de interface gráfica ou novos tipos de desafios.
 
 ---
 
-## 📌 Visão Geral do Jogo
+## 🎯 Objetivo do Jogo
 
-O jogador percorre uma trilha composta por várias casas. Algumas casas contêm desafios (perguntas) e outras são casas livres.  
-Para avançar, o jogador precisa responder corretamente às perguntas apresentadas durante o percurso.
+O objetivo do jogo é conduzir o jogador por uma **trilha de casas**, respondendo corretamente aos desafios apresentados ao longo do percurso até alcançar a linha de chegada.
 
-O jogo possui dois perfis principais:
-
-- **Professor**
-- **Aluno**
-
-Cada perfil possui um painel específico de interação.
+O progresso do jogador depende:
+- Do acerto ou erro das perguntas
+- Do nível de dificuldade selecionado
+- Da distribuição aleatória dos desafios no tabuleiro
 
 ---
 
 ## 👥 Perfis do Sistema
 
-### 🧑‍🏫 Painel do Professor
-Permite gerenciar o conteúdo do jogo.
+O sistema possui **dois perfis distintos**, cada um com responsabilidades bem definidas, acessados por meio de painéis específicos.
 
-Funcionalidades:
-- Adicionar perguntas
+### 🧑‍🏫 Professor
+O professor é responsável pela **configuração e manutenção do conteúdo do jogo**.
+
+Por meio do **Painel do Professor**, é possível:
+- Cadastrar novas perguntas
+- Editar ou substituir perguntas existentes
 - Remover perguntas
-- Substituir perguntas existentes
-- Listar todas as perguntas cadastradas
+- Visualizar todas as perguntas cadastradas
 
-As perguntas ficam armazenadas em um repositório central, reutilizado pelo jogo.
+As perguntas são armazenadas em um **repositório central**, permitindo reutilização e desacoplamento entre o conteúdo e a lógica do jogo.
 
 ---
 
-### 🧑‍🎓 Painel do Aluno
-Permite jogar o **Trilha do Saber**.
+### 🧑‍🎓 Aluno
+O aluno é o jogador do sistema.
 
-Funcionalidades:
-- Iniciar o jogo
-- Visualizar a posição atual no tabuleiro
+Por meio do **Painel do Aluno**, é possível:
+- Iniciar uma nova partida
+- Acompanhar sua posição atual no tabuleiro
+- Visualizar o estado da casa atual (com ou sem desafio)
 - Responder perguntas
-- Receber feedback de acerto ou erro
+- Receber feedback imediato sobre acertos e erros
 
 ---
 
-## 🧩 Como o Jogo Funciona
+## 🧩 Estrutura do Tabuleiro
 
-1. O aluno inicia o jogo pelo **Painel do Aluno**
-2. O jogo cria:
-   - Um tabuleiro
-   - Um jogador
-   - Um nível de dificuldade
-3. O jogador começa na posição `0`
-4. A cada rodada:
-   - O jogador avança para uma casa
-   - Se a casa tiver desafio:
-     - Uma pergunta é exibida
-     - O jogador responde
-     - O jogo valida a resposta
-   - Se a casa não tiver desafio:
-     - O jogador avança sem responder pergunta
+- O tabuleiro representa a trilha do jogo
+- A quantidade de casas é definida pelo professor
+- O sistema garante um **mínimo de 2 casas**
+- Cada casa pode:
+  - Conter um desafio (pergunta)
+  - Ou ser uma casa vazia (casa de sorte)
+
+### Distribuição dos desafios
+- A distribuição das perguntas ocorre de forma **aleatória**
+- Caso o número de casas seja maior que o número de perguntas disponíveis:
+  - As perguntas são reutilizadas de forma randômica
+- Nem todas as casas necessariamente terão desafios
 
 ---
 
-## ⚠️ Regras de Penalidade
+## ❓ Perguntas e Desafios
 
-- Resposta correta:
-  - Jogador avança uma casa
-- Resposta incorreta:
-  - Jogador retrocede uma casa
-- Se o jogador ficar com posição negativa:
-  - O jogo é encerrado imediatamente
+As perguntas são modeladas como um **conceito central do domínio do jogo**.
+
+Características:
+- Cada pergunta possui:
+  - Um texto
+  - Uma resposta correta
+- Existe uma classe abstrata base (`Pergunta`)
+- Tipos específicos de perguntas são representados por subclasses, como:
+  - Pergunta de Matemática
+  - Pergunta de Geografia
+  - Pergunta de História
+
+Essa abordagem permite:
+- Reutilização de lógica comum
+- Organização semântica
+- Fácil extensão futura sem alterar código existente
 
 ---
 
 ## 🎯 Modos de Dificuldade
 
-O jogo possui três níveis de dificuldade:
+O jogo possui três modos de dificuldade, implementados de forma **polimórfica**:
 
-- **Fácil** → 50% das casas com desafios
-- **Médio** → 80% das casas com desafios
-- **Difícil** → 90% das casas com desafios
+- **Fácil**  
+  - 50% das casas possuem desafios
+- **Médio**  
+  - 80% das casas possuem desafios
+- **Difícil**  
+  - 90% das casas possuem desafios
 
-A dificuldade influencia diretamente a quantidade de casas com perguntas no tabuleiro.
+O cálculo do número de desafios é baseado no **total de casas do tabuleiro**, garantindo sempre um valor inteiro.
 
 ---
 
-## 🧠 Arquitetura do Projeto
+## 🔁 Dinâmica do Jogo
 
-O projeto foi estruturado para:
-- Separar responsabilidades
-- Facilitar manutenção
-- Permitir expansão futura (GUI, novos tipos de perguntas, novos modos)
+1. O jogador inicia na posição `0`
+2. A cada rodada:
+   - O sistema informa a posição atual do jogador
+   - Exibe se a casa atual possui desafio ou não
+3. Caso a casa **não possua desafio**:
+   - O jogador é informado que teve sorte
+   - Pode avançar normalmente
+4. Caso a casa **possua desafio**:
+   - A pergunta é exibida
+   - O jogador insere sua resposta
+   - O sistema valida automaticamente a resposta
 
-A organização do código segue uma divisão por **tipo técnico**:
-- Interfaces
-- Classes abstratas
-- Implementações concretas
-- Camada de controle (fachada)
+---
+
+## ⚠️ Penalidades e Regras de Fim de Jogo
+
+- **Resposta correta**
+  - O jogador avança uma casa
+  - O contador de desafios restantes diminui
+- **Resposta incorreta**
+  - O jogador retrocede uma casa (-1)
+- Se a posição do jogador ficar **menor que zero**:
+  - O jogo é encerrado imediatamente
+  - Uma mensagem de incentivo/zoação é exibida
+- Ao alcançar a última casa do tabuleiro:
+  - O jogo é encerrado com sucesso
+  - Uma mensagem encorajadora é exibida
+  - É informado que o jogador “ganhou 1 ponto na disciplina” (valor simbólico)
+
+---
+
+## 📊 Informações Exibidas Durante o Jogo
+
+Durante a execução, o sistema exibe:
+- Posição atual do jogador
+- Estado da casa (com ou sem desafio)
+- Quantidade de desafios restantes no percurso
+- Resultado da resposta (acerto ou erro)
+
+---
+
+## 🧠 Arquitetura e Organização do Código
+
+O projeto foi desenvolvido com foco em:
+- Separação clara de responsabilidades
+- Baixo acoplamento
+- Alta coesão
+
+Principais decisões arquiteturais:
+- Uso de **interfaces** para contratos (`Painel`, `Dificuldade`)
+- Uso de **classe abstrata** para conceitos do domínio (`Pergunta`)
+- Aplicação de **polimorfismo**, evitando `instanceof`
+- Organização de pacotes por **tipo técnico** (interfaces, abstratas, implementações)
+
+Essa arquitetura facilita:
+- Manutenção
+- Testes
+- Evolução futura (ex: interface gráfica)
 
 ---
 
 ## 🚀 Considerações Finais
 
-O **Trilha do Saber** não é apenas um jogo, mas um projeto didático que demonstra conceitos importantes como:
-- Polimorfismo
-- Encapsulamento
-- Herança
-- Interfaces
-- Princípios SOLID
+O **Trilha do Saber** é um jogo educativo simples em sua execução, porém cuidadosamente planejado do ponto de vista de engenharia de software.  
+Ele demonstra, de forma prática, conceitos fundamentais de **Orientação a Objetos**, **UML** e **princípios SOLID**, atendendo plenamente aos critérios de atividades acadêmicas rigorosas.
 
-Sinta-se à vontade para explorar, modificar e evoluir o projeto.
+---
