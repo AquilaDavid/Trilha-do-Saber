@@ -1,169 +1,211 @@
 # 📊 Diagrama de Classes – Trilha do Saber
 
-Este documento explica o **Diagrama de Classes** do jogo **Trilha do Saber**, detalhando as responsabilidades de cada classe, suas relações e o motivo das decisões de modelagem.
+Este documento descreve detalhadamente a estrutura do sistema Trilha do Saber com base no Diagrama de Classes.
 
 ---
 
-## 🖼️ Diagrama de Classes
-
-> O diagrama completo pode ser visualizado na imagem abaixo:
+## 🖼️ Visualização do Diagrama
 
 ![Diagrama de Classes do Trilha do Saber](./Diagrama-Classes.png)
 
 ---
 
-## 🧱 Visão Geral da Arquitetura
+# 🧱 Visão Geral Arquitetural
 
 O sistema foi modelado seguindo os princípios de:
+
 - Alta coesão
 - Baixo acoplamento
+- Programação orientada a interfaces
 - Separação clara de responsabilidades
 
-As classes estão organizadas em grupos conceituais:
-- Fachada e painéis
-- Motor do jogo
-- Domínio (tabuleiro, jogador, perguntas)
-- Repositórios
-- Estratégias de dificuldade
+A arquitetura é organizada em camadas:
+
+- Interface (UI)
+- Controle (Controller)
+- Domínio (Domain)
+- Persistência (Repository)
+- Utilitário (Util)
 
 ---
 
-## 🎛️ Fachada e Painéis
+# 🎛️ Camada de Interface
 
-### `FachadaDoJogo`
-Responsável por coordenar o fluxo geral da aplicação.
+## Painel (Interface)
 
-Funções:
-- Inicializar o sistema
-- Delegar o controle para o painel ativo
+Define o contrato comum para os painéis do sistema:
 
----
-
-### `Painel` (Interface)
-Define o contrato comum para todos os painéis do sistema.
-
-Métodos:
-- `iniciar()`
-- `encerrar()`
+- iniciar()
+- encerrar()
 
 ---
 
-### `PainelAluno`
-Implementa a interface `Painel`.
+## PainelAluno
+
+Responsável por:
+
+- Interagir com a FachadaDoJogo
+- Iniciar partidas
+- Exibir informações ao jogador
+
+Depende da abstração `FachadaDoJogo`.
+
+---
+
+## PainelProfessor
+
+Responsável por:
+
+- Gerenciar perguntas
+- Gerenciar disciplinas
+
+Depende das abstrações:
+- RepositorioPerguntas
+- RepositorioDisciplinas
+
+---
+
+# 🎮 Camada de Controle
+
+## FachadaDoJogo
+
+Funciona como ponto de entrada simplificado para o jogo.
+
+Responsável por:
+
+- Inicializar o MotorDoJogo
+- Delegar operações ao motor
+
+---
+
+## MotorDoJogo
+
+É o núcleo da aplicação.
 
 Responsabilidades:
-- Iniciar o jogo
-- Controlar a interação do aluno com o motor do jogo
-- Executar a lógica de jogo (jogar)
 
----
-
-### `PainelProfessor`
-Implementa a interface `Painel`.
-
-Responsabilidades:
-- Gerenciar o repositório de perguntas
-- Adicionar, remover e listar perguntas
-
----
-
-## ⚙️ Motor do Jogo
-
-### `MotorDoJogo`
-Centraliza as regras do jogo.
-
-Responsabilidades:
 - Controlar o tabuleiro
 - Gerenciar o jogador
 - Aplicar a dificuldade
-- Processar respostas e jogadas
+- Buscar perguntas no repositório
+- Validar respostas
+- Determinar fim de jogo
+
+Depende da interface `RepositorioPerguntas`, garantindo baixo acoplamento.
 
 ---
 
-## 🧩 Tabuleiro e Casas
+# 🧩 Camada de Domínio
 
-### `Tabuleiro`
-Representa a trilha do jogo.
+## Pergunta
 
-- Contém uma lista de `Casa`
-- Controla o acesso às casas do percurso
+Representa um desafio do jogo.
 
-### `Casa`
-Representa uma posição do tabuleiro.
+Contém:
 
-- Pode conter ou não uma pergunta
-- Sabe informar se possui desafio
+- Disciplina (String)
+- Texto
+- Resposta correta
 
----
-
-## 🧑 Jogador
-
-### `Jogador`
-Representa o jogador no jogo.
-
-Responsabilidades:
-- Controlar a posição atual
-- Avançar ou retroceder conforme regras do jogo
+Possui método para validação de resposta.
 
 ---
 
-## ❓ Perguntas
+## Disciplina
 
-### `Pergunta` (Classe Abstrata)
-Representa o conceito base de uma pergunta.
-
-Motivo de ser abstrata:
-- Compartilha atributos comuns (texto, resposta correta)
-- Compartilha comportamento (`estaCorreta`)
-- Permite especializações sem duplicação de código
+Representa uma área de conhecimento associada às perguntas.
 
 ---
 
-### Especializações de Pergunta
-- `PerguntaMatematica`
-- `PerguntaGeografia`
-- `PerguntaHistoria`
+## Jogador
 
-Essas classes permitem:
-- Organização semântica
-- Extensão futura com regras específicas
+Controla a posição atual no tabuleiro.
 
 ---
 
-## 🗂️ Repositório de Perguntas
+## Casa
 
-### `RepositorioPerguntas`
-Responsável por armazenar e gerenciar as perguntas.
-
-Funções:
-- Adicionar perguntas
-- Remover perguntas
-- Substituir perguntas
-- Listar perguntas disponíveis
-
-A relação com `Pergunta` é de **agregação**, pois as perguntas podem existir independentemente do repositório.
+Pode conter uma pergunta ou ser vazia.
 
 ---
 
-## 🎯 Dificuldade
+## Tabuleiro
 
-### `Dificuldade` (Interface)
-Define o contrato para cálculo de percentual de desafios no tabuleiro.
+Contém uma lista de casas.
+
+Possui relação de composição com `Casa`, pois o tabuleiro é formado por casas.
+
+---
+
+## Dificuldade (Interface)
+
+Define o percentual de casas que conterão desafios.
 
 Implementações:
-- `DificuldadeFacil`
-- `DificuldadeMedia`
-- `DificuldadeDificil`
 
-Essa abordagem aplica o **padrão Strategy**, permitindo alterar a dificuldade sem modificar o motor do jogo.
+- DificuldadeFacil
+- DificuldadeMedia
+- DificuldadeDificil
+
+Aplica o padrão Strategy.
 
 ---
 
-## ✅ Conclusão
+# 💾 Camada de Persistência
 
-O diagrama de classes do **Trilha do Saber** foi projetado para:
-- Ser fácil de entender
-- Ser fácil de manter
-- Permitir evolução sem quebra de código existente
+## RepositorioPerguntas (Interface)
 
-Ele reflete fielmente a arquitetura e as regras do jogo, servindo como base sólida para implementação e futuras expansões.
+Define operações de:
+
+- Adicionar
+- Remover
+- Substituir
+- Listar
+- Buscar
+- Obter pergunta aleatória
+
+---
+
+## RepositorioPerguntasCSV
+
+Implementação concreta que:
+
+- Lê perguntas de arquivo CSV
+- Salva alterações
+- Embaralha perguntas
+- Aplica rotação circular
+
+---
+
+## RepositorioDisciplinas (Interface)
+
+Gerencia disciplinas do sistema.
+
+---
+
+## RepositorioDisciplinasCSV
+
+Implementação que persiste disciplinas em arquivo CSV.
+
+---
+
+# 🔗 Principais Relações
+
+- MotorDoJogo depende de RepositorioPerguntas (abstração)
+- PainelProfessor depende das interfaces de repositório
+- Tabuleiro compõe Casas
+- Casa pode conter Pergunta
+- Dificuldade é aplicada via polimorfismo
+
+---
+
+# ✅ Conclusão
+
+O Diagrama de Classes do Trilha do Saber demonstra:
+
+- Uso correto de abstrações
+- Aplicação de polimorfismo
+- Separação clara entre regras de negócio e persistência
+- Organização estruturada e extensível
+
+A modelagem está alinhada com a implementação real do sistema.

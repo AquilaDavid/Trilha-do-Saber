@@ -1,46 +1,52 @@
 # 🎮 Trilha do Saber
 
-O **Trilha do Saber** é um jogo educativo desenvolvido em **Java puro**, executado inicialmente em **terminal**, cujo foco principal é promover o aprendizado por meio de desafios e, ao mesmo tempo, demonstrar a aplicação correta de **Orientação a Objetos**, **arquitetura limpa** e **princípios SOLID**.
+O **Trilha do Saber** é um jogo educativo desenvolvido em **Java puro**, executado em ambiente de **terminal**, cujo objetivo é unir aprendizado e prática de conceitos sólidos de **Orientação a Objetos**, **arquitetura em camadas** e **princípios SOLID**.
 
-O projeto foi pensado para ser simples na execução, porém **robusto na organização do código**, permitindo fácil avaliação acadêmica e futura evolução, como a adição de interface gráfica ou novos tipos de desafios.
+O sistema foi projetado para ser simples na execução, porém robusto na organização interna, permitindo fácil manutenção, avaliação acadêmica e futuras evoluções (como interface gráfica ou persistência em banco de dados).
 
 ---
 
 ## 🎯 Objetivo do Jogo
 
-O objetivo do jogo é conduzir o jogador por uma **trilha de casas**, respondendo corretamente aos desafios apresentados ao longo do percurso até alcançar a linha de chegada.
+O jogador percorre uma trilha composta por casas.  
+Algumas casas possuem desafios (perguntas) e outras são casas neutras.
 
-O progresso do jogador depende:
-- Do acerto ou erro das perguntas
-- Do nível de dificuldade selecionado
-- Da distribuição aleatória dos desafios no tabuleiro
+O objetivo é alcançar a última casa do tabuleiro respondendo corretamente aos desafios encontrados no percurso.
+
+O progresso depende de:
+- Acertos e erros nas perguntas
+- Nível de dificuldade escolhido
+- Distribuição dos desafios no tabuleiro
 
 ---
 
 ## 👥 Perfis do Sistema
 
-O sistema possui **dois perfis distintos**, cada um com responsabilidades bem definidas, acessados por meio de painéis específicos.
+O sistema possui dois perfis distintos:
 
 ### 🧑‍🏫 Professor
-O professor é responsável pela **configuração e manutenção do conteúdo do jogo**.
 
-Por meio do **Painel do Professor**, é possível:
-- Cadastrar novas perguntas
-- Editar ou substituir perguntas existentes
+Responsável por gerenciar o conteúdo do jogo.
+
+Através do painel do professor é possível:
+- Cadastrar perguntas
+- Substituir perguntas existentes
 - Remover perguntas
-- Visualizar todas as perguntas cadastradas
+- Visualizar perguntas cadastradas
+- Gerenciar disciplinas
 
-As perguntas são armazenadas em um **repositório central**, permitindo reutilização e desacoplamento entre o conteúdo e a lógica do jogo.
+As informações são armazenadas em arquivos `.csv`, garantindo persistência simples e desacoplada da lógica do jogo.
 
 ---
 
 ### 🧑‍🎓 Aluno
-O aluno é o jogador do sistema.
 
-Por meio do **Painel do Aluno**, é possível:
+Responsável por jogar a partida.
+
+Através do painel do aluno é possível:
 - Iniciar uma nova partida
-- Acompanhar sua posição atual no tabuleiro
-- Visualizar o estado da casa atual (com ou sem desafio)
+- Escolher o nível de dificuldade
+- Visualizar sua posição no tabuleiro
 - Responder perguntas
 - Receber feedback imediato sobre acertos e erros
 
@@ -48,123 +54,73 @@ Por meio do **Painel do Aluno**, é possível:
 
 ## 🧩 Estrutura do Tabuleiro
 
-- O tabuleiro representa a trilha do jogo
-- A quantidade de casas é definida pelo professor
-- O sistema garante um **mínimo de 2 casas**
-- Cada casa pode:
-  - Conter um desafio (pergunta)
-  - Ou ser uma casa vazia (casa de sorte)
+- O tabuleiro é composto por uma lista de casas
+- O número de casas é configurável
+- O sistema garante um mínimo de 2 casas
+- Cada casa pode conter ou não um desafio
 
 ### Distribuição dos desafios
-- A distribuição das perguntas ocorre de forma **aleatória**
-- Caso o número de casas seja maior que o número de perguntas disponíveis:
-  - As perguntas são reutilizadas de forma randômica
-- Nem todas as casas necessariamente terão desafios
 
----
+A quantidade de casas com perguntas depende da dificuldade escolhida:
 
-## ❓ Perguntas e Desafios
+- Fácil → 50%
+- Médio → 80%
+- Difícil → 90%
 
-As perguntas são modeladas como um **conceito central do domínio do jogo**.
-
-Características:
-- Cada pergunta possui:
-  - Um texto
-  - Uma resposta correta
-- Existe uma classe abstrata base (`Pergunta`)
-- Tipos específicos de perguntas são representados por subclasses, como:
-  - Pergunta de Matemática
-  - Pergunta de Geografia
-  - Pergunta de História
-
-Essa abordagem permite:
-- Reutilização de lógica comum
-- Organização semântica
-- Fácil extensão futura sem alterar código existente
-
----
-
-## 🎯 Modos de Dificuldade
-
-O jogo possui três modos de dificuldade, implementados de forma **polimórfica**:
-
-- **Fácil**  
-  - 50% das casas possuem desafios
-- **Médio**  
-  - 80% das casas possuem desafios
-- **Difícil**  
-  - 90% das casas possuem desafios
-
-O cálculo do número de desafios é baseado no **total de casas do tabuleiro**, garantindo sempre um valor inteiro.
+Caso o número de casas seja maior que o número de perguntas disponíveis:
+- As perguntas são reutilizadas de forma rotativa
+- A lista é embaralhada automaticamente
 
 ---
 
 ## 🔁 Dinâmica do Jogo
 
 1. O jogador inicia na posição `0`
-2. A cada rodada:
-   - O sistema informa a posição atual do jogador
-   - Exibe se a casa atual possui desafio ou não
-3. Caso a casa **não possua desafio**:
-   - O jogador é informado que teve sorte
-   - Pode avançar normalmente
-4. Caso a casa **possua desafio**:
+2. O sistema informa o estado da casa atual
+3. Se houver desafio:
    - A pergunta é exibida
-   - O jogador insere sua resposta
-   - O sistema valida automaticamente a resposta
+   - O jogador responde
+   - O sistema valida automaticamente
+4. Se não houver desafio:
+   - O jogador avança normalmente
 
 ---
 
-## ⚠️ Penalidades e Regras de Fim de Jogo
+## ⚠️ Regras
 
-- **Resposta correta**
-  - O jogador avança uma casa
-  - O contador de desafios restantes diminui
-- **Resposta incorreta**
-  - O jogador retrocede uma casa (-1)
-- Se a posição do jogador ficar **menor que zero**:
-  - O jogo é encerrado imediatamente
-  - Uma mensagem de incentivo/zoação é exibida
-- Ao alcançar a última casa do tabuleiro:
-  - O jogo é encerrado com sucesso
-  - Uma mensagem encorajadora é exibida
-  - É informado que o jogador “ganhou 1 ponto na disciplina” (valor simbólico)
+- Resposta correta → jogador avança uma casa
+- Resposta incorreta → jogador retrocede uma casa
+- Se a posição ficar menor que zero → jogo encerrado
+- Ao alcançar a última casa → vitória
+
+Durante o jogo, o sistema informa:
+- Posição atual
+- Estado da casa
+- Resultado da resposta
 
 ---
 
-## 📊 Informações Exibidas Durante o Jogo
+## 🧠 Arquitetura do Projeto
 
-Durante a execução, o sistema exibe:
-- Posição atual do jogador
-- Estado da casa (com ou sem desafio)
-- Quantidade de desafios restantes no percurso
-- Resultado da resposta (acerto ou erro)
+O sistema foi estruturado com:
 
----
+- Separação em camadas (UI, Controller, Domain, Repository, Util)
+- Uso de interfaces como contratos
+- Dependência por abstração
+- Composição entre Tabuleiro e Casa
+- Uso de `Optional` para evitar valores nulos
+- Persistência em arquivos CSV
 
-## 🧠 Arquitetura e Organização do Código
+Essa organização permite:
 
-O projeto foi desenvolvido com foco em:
-- Separação clara de responsabilidades
+- Fácil manutenção
+- Evolução futura
 - Baixo acoplamento
 - Alta coesão
 
-Principais decisões arquiteturais:
-- Uso de **interfaces** para contratos (`Painel`, `Dificuldade`)
-- Uso de **classe abstrata** para conceitos do domínio (`Pergunta`)
-- Aplicação de **polimorfismo**, evitando `instanceof`
-- Organização de pacotes por **tipo técnico** (interfaces, abstratas, implementações)
-
-Essa arquitetura facilita:
-- Manutenção
-- Testes
-- Evolução futura (ex: interface gráfica)
-
 ---
 
-## 🚀 Considerações Finais
+## 📊 Documentação Técnica
 
-O **Trilha do Saber** é um jogo educativo simples em sua execução, porém cuidadosamente planejado do ponto de vista de engenharia de software.  
-Ele demonstra, de forma prática, conceitos fundamentais de **Orientação a Objetos**, **UML** e **princípios SOLID**, atendendo plenamente aos critérios de atividades acadêmicas rigorosas.
+A explicação detalhada do **Diagrama de Classes** encontra-se na pasta:
 
----
