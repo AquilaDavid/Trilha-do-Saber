@@ -28,7 +28,7 @@ public class RepositorioPerguntasCSV implements RepositorioPerguntas {
 
     private void carregarArquivo() {
 
-        Path path = Paths.get(pasta + "perguntas.csv");
+       Path path = Paths.get(pasta, "perguntas.csv");
         if (!Files.exists(path)) return;
 
         try (BufferedReader br = Files.newBufferedReader(path)) {
@@ -59,7 +59,7 @@ public class RepositorioPerguntasCSV implements RepositorioPerguntas {
 
     private void salvarTudo() {
 
-        Path path = Paths.get(pasta + "perguntas.csv");
+        Path path = Paths.get(pasta, "perguntas.csv");
 
         try (BufferedWriter bw = Files.newBufferedWriter(
                 path,
