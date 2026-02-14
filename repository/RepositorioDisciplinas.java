@@ -1,4 +1,4 @@
-package repository.repository;
+package repository;
 
 import domain.disciplina.Disciplina;
 import java.util.List;
